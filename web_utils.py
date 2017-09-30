@@ -15,7 +15,7 @@ def async_json_out(orig_method=None, *, status=200, content_type='application/js
     Decorates aiohttp request handlers.
     """
     if orig_method is None:
-        return partial(async_json_out, status=200, content_type='application/json', **dec_kwargs)
+        return partial(async_json_out, status=status, content_type=content_type, **dec_kwargs)
 
     @wraps(orig_method)
     async def wrapper(*args, **kwargs):
