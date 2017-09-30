@@ -3,6 +3,7 @@
 from aiohttp.web_urldispatcher import View
 
 from web_utils import async_json_out
+from db.models import TalkTbl
 
 
 class Votes(View):
@@ -29,6 +30,8 @@ class Talk(View):
     async def get(self):
         """Return dummy json in response to HTTP GET request."""
         talk_name = self.request.match_info['name']
+        async with self.request.app['db_engine'].accuire() as conn:
+            retrieved_data = await conn.execute(TalkTbl.select())
         # TODO: get talk by name
         return {
             'talk_name': talk_name,
