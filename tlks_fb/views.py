@@ -31,13 +31,19 @@ class Talk(View):
         """Return dummy json in response to HTTP GET request."""
         talk_name = self.request.match_info['name']
         async with self.request.app['db_engine'].accuire() as conn:
-            retrieved_data = await conn.execute(TalkTbl.select())
+            talk_votes = await conn.execute(
+                TalkTbl.select([
+                    TalkTbl.positive,
+                    TalkTbl.negative,
+                    TalkTbl.neutral,
+                ]).where(TalkTbl.name == talk_name)
+            ).fetchone()
         # TODO: get talk by name
         return {
             'talk_name': talk_name,
-            'positive': 1,
-            'negative': 1,
-            'neutral': 1,
+            'positive': talk_votes['positive'],
+            'negative': talk_votes['negative'],
+            'neutral': talk_votes['neutral'],
         }
 
     @async_json_out
